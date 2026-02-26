@@ -11,6 +11,20 @@ class SignUpScreen extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // Email validation function
+  bool isValidEmail(String email) {
+    final RegExp emailRegex =
+        RegExp(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$');
+    return emailRegex.hasMatch(email);
+  }
+
+  // Password strength validation function
+  bool isStrongPassword(String password) {
+    final RegExp strongPasswordRegex =
+        RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$');
+    return strongPasswordRegex.hasMatch(password);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,12 +35,13 @@ class SignUpScreen extends StatelessWidget {
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
-        backgroundColor: const Color(0xFF000000), // Black background
+        backgroundColor: const Color(0xFF000000),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.of(context).pop(); // Navigate back
+            Navigator.of(context)
+                .pushReplacementNamed('/login'); // Navigate to login
           },
         ),
       ),
@@ -74,7 +89,7 @@ class SignUpScreen extends StatelessWidget {
                 controller: passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
-                  labelText: 'Password (min 8 characters)',
+                  labelText: 'Password (min 8 chars, 1 number, 1 special char)',
                   labelStyle: const TextStyle(color: Colors.white),
                   prefixIcon: const Icon(Icons.lock, color: Colors.white),
                   filled: true,
@@ -114,20 +129,22 @@ class SignUpScreen extends StatelessWidget {
                       confirmPasswordController.text.trim();
 
                   // Input validation
-                  if (username.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Username cannot be empty.')),
-                    );
-                  } else if (email.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Email cannot be empty.')),
-                    );
-                  } else if (password.length < 8) {
+                  if (username.isEmpty || username.length < 4) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                           content:
-                              Text('Password must be at least 8 characters.')),
+                              Text('Username must be at least 4 characters.')),
+                    );
+                  } else if (!isValidEmail(email)) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Please enter a valid email address.')),
+                    );
+                  } else if (!isStrongPassword(password)) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text(
+                              'Password must be at least 8 characters, include a number and a special character.')),
                     );
                   } else if (password != confirmPassword) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -163,9 +180,8 @@ class SignUpScreen extends StatelessWidget {
                             TextButton(
                               onPressed: () {
                                 Navigator.of(context).pop(); // Close the dialog
-                                // Navigate to Login Page
-                                Navigator.of(context)
-                                    .pushReplacementNamed('/login');
+                                Navigator.of(context).pushReplacementNamed(
+                                    '/login'); // Go to login
                               },
                               child: const Text('OK'),
                             ),

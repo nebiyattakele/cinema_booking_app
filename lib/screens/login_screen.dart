@@ -4,14 +4,20 @@ import 'package:firebase_auth/firebase_auth.dart';
 class LoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance; // Firebase Auth instance
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  bool isValidEmail(String email) {
+    final emailRegex =
+        RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+    return emailRegex.hasMatch(email);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF000000), // Black background
+      backgroundColor: const Color(0xFF000000), // Black background
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Login',
           style: TextStyle(
             color: Colors.white, // White text
@@ -20,12 +26,13 @@ class LoginScreen extends StatelessWidget {
           ),
         ),
         centerTitle: true,
-        backgroundColor: Color(0xFF000000), // Black background
+        backgroundColor: const Color(0xFF000000), // Black background
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white), // White icon
+          icon: const Icon(Icons.arrow_back, color: Colors.white), // White icon
           onPressed: () {
-            Navigator.of(context).pop(); // Navigate back
+            Navigator.of(context)
+                .pushReplacementNamed('/'); // Navigate to Splash Screen
           },
         ),
       ),
@@ -40,34 +47,34 @@ class LoginScreen extends StatelessWidget {
               controller: emailController,
               decoration: InputDecoration(
                 labelText: 'Email',
-                labelStyle: TextStyle(color: Colors.white),
-                prefixIcon: Icon(Icons.email, color: Colors.white),
+                labelStyle: const TextStyle(color: Colors.white),
+                prefixIcon: const Icon(Icons.email, color: Colors.white),
                 filled: true,
-                fillColor: Color(0xFF1C1C1C),
+                fillColor: const Color(0xFF1C1C1C),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Password Input
             TextField(
               controller: passwordController,
               obscureText: true,
               decoration: InputDecoration(
-                labelText: 'Password (min 8 characters)',
-                labelStyle: TextStyle(color: Colors.white),
-                prefixIcon: Icon(Icons.lock, color: Colors.white),
+                labelText: 'Password',
+                labelStyle: const TextStyle(color: Colors.white),
+                prefixIcon: const Icon(Icons.lock, color: Colors.white),
                 filled: true,
-                fillColor: Color(0xFF1C1C1C),
+                fillColor: const Color(0xFF1C1C1C),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             // Login Button
             ElevatedButton(
               onPressed: () async {
@@ -76,15 +83,20 @@ class LoginScreen extends StatelessWidget {
 
                 if (email.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Email cannot be empty.')),
+                    const SnackBar(content: Text('Email cannot be empty.')),
+                  );
+                } else if (!isValidEmail(email)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Enter a valid email address.')),
                   );
                 } else if (password.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Password cannot be empty.')),
+                    const SnackBar(content: Text('Password cannot be empty.')),
                   );
                 } else if (password.length < 8) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('Password must be at least 8 characters.'),
                     ),
                   );
@@ -115,11 +127,12 @@ class LoginScreen extends StatelessWidget {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFFFFD700), // Gold
-                shape: StadiumBorder(), // Oval shape
-                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 50.0),
+                backgroundColor: const Color(0xFFFFD700), // Gold
+                shape: const StadiumBorder(), // Oval shape
+                padding: const EdgeInsets.symmetric(
+                    vertical: 15.0, horizontal: 50.0),
               ),
-              child: Text(
+              child: const Text(
                 'Login',
                 style: TextStyle(
                   color: Colors.black, // Black text for contrast
@@ -128,14 +141,14 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Create Account Text Button
             TextButton(
               onPressed: () {
                 Navigator.of(context)
                     .pushNamed('/signup'); // Navigate to Sign Up Page
               },
-              child: Text(
+              child: const Text(
                 'Create Account',
                 style: TextStyle(
                   color: Color(0xFFFFD700), // Gold color
